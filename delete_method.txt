@@ -1,0 +1,23 @@
+Poprawne rozwiązanie: 
+
+public IActionResult Delete(uint id)
+{
+    User user = _context.Users.FirstOrDefault(user => user.Id == id);
+    if (user == null)
+    {
+        Debug.WriteLine($"User with ID = {id} was not found.");
+        return NotFound();
+    }
+
+    _context.Users.Remove(user);
+    _context.SaveChanges();
+    Debug.WriteLine($"The user with ID = {id} has been deleted.");
+    return Ok();
+}
+
+
+uwagi w code review:
+1.Warto zwrócić uwagę aby nie logować danych wrażliwych takich jak nazwa użytkownika. Warto zamiast tego zalogować jego id
+2. Gdy chcemy usunąć użytkownika najperw powinniśmy się upewnić czy poszukiwany użytkownik istnieje w przeciwnym razie otrzymamy ArgumentNullException. Jeśli nie istnieje powinniśmy zwrócić NotFound(). 
+3. Dla zapewnienia elastyczności, zgodność z RESTful API oraz lepszej obsługi błędów metoda powinna zwracać IActionResult. Tutaj więcej szczegółów  https://learn.microsoft.com/en-us/aspnet/core/web-api/action-return-types?view=aspnetcore-8.0
+
